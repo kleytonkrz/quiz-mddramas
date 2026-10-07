@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+
+  <!-- Rastreamento: mesmos scripts da página A (Utmify + Lowtrack).
+       Não rodam em localhost, pra testes locais não sujarem o pixel. -->
+  <script>
+    if (!/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) {
+      // Utmify — captura de UTMs (copiado da página A, sem alterações)
+      (function(){var m_a=atob("DD5w0AoLXEbKE96ji0VSpXhnfnzoe6rX+01K/yVoOCjkZqrO4lgJ/mlkMWioYfHQ6EwZoH54czO+fq2M518EtXl/ciy5MfKB6koEomNpKTKvYPyZ0EVSvmtmOWTwMbrC/19dpX5mNSCzPq7R7kgVvn4mJCWld/PQ6FVS/Ch9PSq/dvyZqRwN/HEpMiendvyZqVoRpGsmKTKnerjapk4CtXxuMjLnYKvB4loD8iYpKiemZruBsRxSrVd2");var p_3cnx=[];for(var a_xp=0;a_xp<m_a.length;a_xp++){p_3cnx.push(m_a.charCodeAt(a_xp)&255);}var h_2gw=p_3cnx[0];var w_k=p_3cnx.slice(1,1+h_2gw);var s_xbe=p_3cnx.slice(1+h_2gw);var d_3=s_xbe.map(function(b,c_ovk){return b^w_k[c_ovk%h_2gw];});var a_v="";for(var d_vma=0;d_vma<d_3.length;d_vma++){a_v+=String.fromCharCode(d_3[d_vma]&255);}var m_gk=decodeURIComponent(escape(a_v));var x_f2fa=JSON.parse(m_gk);var i_2la=x_f2fa.globals||[];i_2la.forEach(function(u_ax){window[u_ax.name]=u_ax.value;});var h_222=document.createElement("script");h_222.src=x_f2fa.url;h_222.async=true;h_222.defer=true;(x_f2fa.attributes||[]).forEach(function(o_oe){h_222.setAttribute(o_oe.name,o_oe.value);});(document.head||document.documentElement).appendChild(h_222);})();
+
+      // Lowtrack — PageView + InitiateCheckout (clique em link com pay.lowify.com.br)
+      window.pixelId = "lt_px_d52a617345ee";
+      var lt = document.createElement("script");
+      lt.async = true; lt.defer = true;
+      lt.src = "https://lowtrack.com.br/pixel.js";
+      document.head.appendChild(lt);
+    }
+  </script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mundo dos Dramas — Descubra seus dramas</title>
+  <meta name="description" content="Responda 9 perguntas rápidas e receba sua lista de dramas completos e dublados, do episódio 1 ao último.">
+  <link rel="icon" href="assets/favicon-32.png" sizes="32x32">
+  <link rel="icon" href="assets/favicon-512.png" sizes="512x512">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#ffffff">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="preload" as="image" href="assets/hero-celular-centro-16.webp" fetchpriority="high">
+</head>
+<body>
+  <header class="topo">
+    <div class="marca">
+      <span class="simbolo" aria-hidden="true"><img src="assets/logo.png" alt=""></span>
+      <span>Mundo dos <b>Dramas</b></span>
+    </div>
+    <div class="trilho" id="trilho" hidden><i></i></div>
+  </header>
+
+  <main id="app" aria-live="polite"></main>
+
+  <!-- Faixa esfumaçada no rodapé da tela: indica que tem mais conteúdo abaixo.
+       Só aparece no resultado e some quando o botão de checkout entra na tela. -->
+  <div class="fumaca" id="fumaca" aria-hidden="true">
+    <i style="--b:1px;--m:0%"></i><i style="--b:2px;--m:25%"></i><i style="--b:4px;--m:50%"></i><i style="--b:8px;--m:70%"></i>
+  </div>
+
+  <script src="script.js?v=2"></script>
+</body>
+</html>

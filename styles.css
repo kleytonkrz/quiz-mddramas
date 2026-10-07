@@ -1,0 +1,330 @@
+/* Mundo dos Dramas — quiz (versão B)
+   Estrutura visual inspirada no quiz do Desaposta: fundo claro, títulos
+   grandes centralizados, pouco texto por tela, destaque em "pílula".
+   Cores e fontes da página A (magenta/roxo, Baloo 2 + Open Sans). */
+
+:root {
+  --fundo: #ffffff;
+  --fundo-2: #f7f1fa;
+  --texto: #1c1424;
+  --suave: #6a5d76;
+  --borda: #ebe1f0;
+  --marca: #a51972;
+  --roxo: #7a2aa8;
+  --cta: linear-gradient(135deg, #c2338f, #a03fe0);
+  --pilula: linear-gradient(135deg, #ffcbe8, #e6cfff);
+  --escuro: #1d1224;
+  --vermelho: #e5334a;
+  --verde-ok: #a51972;
+  --raio: 16px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; overflow-x: hidden; }
+body {
+  background: var(--fundo);
+  color: var(--texto);
+  font: 16px/1.5 "Open Sans", system-ui, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+img { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+
+/* ---------- topo: logo + barra de progresso ---------- */
+.topo { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.94); backdrop-filter: blur(8px); padding: 12px 16px 0; }
+.marca { display: flex; align-items: center; justify-content: center; gap: 8px; font: 700 18px "Baloo 2", sans-serif; padding-bottom: 10px; }
+/* símbolo da logo recortado de assets/logo.png (mesmo recorte da página A),
+   dentro de um quadradinho escuro de cantos arredondados */
+.simbolo {
+  --box: 32px; --s: calc(var(--box) * .86);
+  position: relative; flex: none; width: var(--box); height: var(--box); border-radius: 9px;
+  background: radial-gradient(circle at 50% 40%, #2a1240, #120a1a 70%); overflow: hidden;
+  box-shadow: 0 6px 14px -8px rgba(122, 42, 168, .8);
+}
+.simbolo img {
+  position: absolute; max-width: none; height: auto;
+  width: calc(var(--s) * 800 / 183);
+  left: calc((var(--box) - var(--s)) / 2 - var(--s) * 61 / 183);
+  top: calc((var(--box) - var(--s)) / 2 - var(--s) * 70 / 183);
+}
+.simbolo-grande { --box: 64px; border-radius: 18px; position: absolute; inset: 0; margin: auto; }
+.marca b { color: var(--marca); }
+.trilho { max-width: 520px; margin: 0 auto; height: 5px; background: #f1e3f6; border-radius: 99px; overflow: hidden; }
+.trilho[hidden] { display: block; visibility: hidden; }
+.trilho i { display: block; height: 100%; width: 0; background: var(--cta); border-radius: 99px; transition: width .45s ease; }
+
+#app { max-width: 520px; margin: 0 auto; padding: 22px 16px 56px; }
+
+/* ---------- tipografia ---------- */
+h1, h2, h3 { font-family: "Baloo 2", sans-serif; line-height: 1.12; letter-spacing: -.01em; }
+.t-grande { font-size: 32px; font-weight: 800; text-align: center; }
+.t-medio { font-size: 27px; font-weight: 800; text-align: center; }
+.pilula { background: var(--pilula); padding: 0 .22em; border-radius: .3em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.sub { text-align: center; color: var(--suave); font-size: 15px; margin-top: 8px; }
+.selo { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--marca); background: #fcebf5; padding: 5px 12px; border-radius: 99px; }
+.centro { text-align: center; }
+
+/* ---------- botões ---------- */
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+  text-decoration: none; background: var(--cta); color: #fff;
+  font-weight: 700; font-size: 17px; padding: 17px 20px; border-radius: 14px;
+  box-shadow: 0 12px 26px -12px rgba(165, 25, 114, .75);
+  transition: transform .15s;
+}
+.btn:active { transform: scale(.98); }
+.btn[disabled] { opacity: .4; box-shadow: none; cursor: default; }
+.pulsar { animation: pulsar 2.2s ease-in-out infinite; }
+@keyframes pulsar { 0%,100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+.nota { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; color: var(--suave); margin-top: 12px; text-align: center; }
+
+/* ---------- voltar ---------- */
+.voltar { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; color: var(--suave); margin-bottom: 14px; padding: 4px 0; }
+
+/* ---------- transição entre telas ---------- */
+.tela { animation: entrar .4s cubic-bezier(.2,.7,.3,1) both; }
+@keyframes entrar { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+.subir > * { animation: subir .5s cubic-bezier(.2,.7,.3,1) both; }
+.subir > *:nth-child(2) { animation-delay: .06s; }
+.subir > *:nth-child(3) { animation-delay: .12s; }
+.subir > *:nth-child(4) { animation-delay: .18s; }
+.subir > *:nth-child(5) { animation-delay: .24s; }
+.subir > *:nth-child(6) { animation-delay: .30s; }
+.subir > *:nth-child(7) { animation-delay: .36s; }
+@keyframes subir { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+/* ---------- capa ---------- */
+.capa {
+  position: relative; aspect-ratio: 2 / 3; border-radius: 12px; overflow: hidden;
+  background: linear-gradient(160deg, hsl(var(--h, 320) 55% 45%), hsl(calc(var(--h, 320) + 40) 50% 22%));
+}
+.capa img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.capa .tag { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,.62); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 6px; }
+
+/* ================= INTRO ================= */
+.intro h1 { margin-top: 4px; }
+.intro .sub { margin-bottom: 18px; }
+.vitrine { position: relative; height: 330px; margin: 0 auto 22px; max-width: 360px; }
+.vitrine img { position: absolute; top: 0; filter: drop-shadow(0 18px 26px rgba(60, 10, 70, .28)); }
+.vitrine .centro-cel { position: absolute; top: 0; left: 50%; width: 168px; aspect-ratio: 700 / 1376; transform: translateX(-50%); z-index: 2; filter: drop-shadow(0 18px 26px rgba(60, 10, 70, .28)); }
+.vitrine .centro-cel img { position: absolute; inset: 0; width: 100%; height: 100%; filter: none; transition: opacity .7s ease; }
+.vitrine .lado { width: 150px; top: 40px; opacity: .95; }
+.vitrine .esq { left: 0; transform: rotate(-6deg); }
+.vitrine .dir { right: 0; transform: rotate(6deg); }
+.vitrine .chip {
+  position: absolute; z-index: 3; background: #fff; border-radius: 99px; padding: 6px 12px;
+  font-size: 13px; font-weight: 700; box-shadow: 0 8px 22px -8px rgba(60, 20, 70, .35); white-space: nowrap;
+}
+.vitrine .chip-a { left: 2px; bottom: 34px; }
+.vitrine .chip-b { right: 2px; bottom: 74px; }
+
+/* ================= PERGUNTA ================= */
+.pergunta h2 { margin-bottom: 22px; }
+.pergunta .sub { margin: -14px 0 18px; }
+.opcoes { display: grid; gap: 10px; }
+.opcao {
+  display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+  background: #fff; border: 1.5px solid var(--borda); border-radius: 12px;
+  padding: 15px 14px; font-size: 15.5px; color: #3a3044;
+  transition: border-color .15s, background .15s, transform .1s;
+}
+.opcao:hover { border-color: #dcc6e8; }
+.opcao:active { transform: scale(.99); }
+.opcao .emoji { font-size: 24px; width: 30px; text-align: center; flex: none; }
+.opcao .radio { margin-left: auto; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #cbbcd4; flex: none; display: grid; place-items: center; color: #fff; font-size: 12px; font-weight: 800; }
+.opcao[aria-pressed="true"] { border-color: var(--marca); background: #fdf1f8; }
+.opcao[aria-pressed="true"] .radio { background: var(--cta); border-color: transparent; }
+.opcao[aria-pressed="true"] .radio::after { content: "✓"; }
+.pergunta .btn { margin-top: 18px; }
+
+/* categorias com capa */
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tile {
+  position: relative; height: 112px; border-radius: 14px; overflow: hidden; text-align: left;
+  border: 2px solid transparent; transition: transform .1s, border-color .15s;
+}
+.tile:last-child:nth-child(odd) { grid-column: span 2; height: 96px; }
+.tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
+.tile::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,8,26,.05), rgba(20,8,26,.82)); }
+.tile .rot { position: absolute; z-index: 1; left: 10px; right: 10px; bottom: 9px; color: #fff; font: 700 15px/1.15 "Baloo 2", sans-serif; }
+.tile .rot span { display: block; font-size: 20px; }
+.tile .radio { position: absolute; z-index: 1; top: 8px; right: 8px; width: 24px; height: 24px; border-radius: 7px; border: 2px solid rgba(255,255,255,.85); background: rgba(0,0,0,.25); display: grid; place-items: center; color: #fff; font-size: 13px; font-weight: 800; }
+.tile[aria-pressed="true"] { border-color: #e2449f; transform: scale(.98); }
+.tile[aria-pressed="true"] .radio { background: var(--cta); border-color: transparent; }
+.tile[aria-pressed="true"] .radio::after { content: "✓"; }
+
+/* ================= INTERSTICIAIS ================= */
+.pausa h2 { margin-bottom: 20px; }
+.citacao {
+  background: var(--escuro); color: #fff; border-radius: 20px; padding: 24px 22px;
+  box-shadow: 0 22px 40px -22px rgba(29, 18, 36, .8);
+}
+.citacao .aspas { font: 800 44px/0.6 "Baloo 2", sans-serif; background: var(--cta); -webkit-background-clip: text; background-clip: text; color: transparent; display: block; height: 22px; }
+.citacao strong { display: block; font: 800 27px/1.12 "Baloo 2", sans-serif; margin: 6px 0 10px; }
+.citacao p { color: #d6c8de; font-size: 15px; }
+.pausa .fecho { text-align: center; margin: 22px 0 6px; font-weight: 700; font-size: 17px; }
+.pausa .fecho + .sub { margin: 0 0 20px; }
+
+.fileira { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px 18px; padding: 4px 16px 10px; scrollbar-width: none; }
+.fileira::-webkit-scrollbar { display: none; }
+.fileira .capa { flex: 0 0 120px; scroll-snap-align: start; box-shadow: 0 10px 22px -12px rgba(40, 10, 50, .5); }
+
+/* ================= ANÁLISE ================= */
+.analise { text-align: center; padding-top: 34px; }
+.anel { position: relative; width: 150px; height: 150px; margin: 0 auto 26px; }
+.anel svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.anel circle { fill: none; stroke-width: 7; }
+.anel .fundo-anel { stroke: #f1e3f6; }
+.anel .progresso-anel { stroke: url(#gradAnel); stroke-linecap: round; stroke-dasharray: 427; stroke-dashoffset: 427; }
+.etapas { list-style: none; display: grid; gap: 14px; text-align: left; max-width: 290px; margin: 24px auto 0; }
+.etapas li { display: flex; align-items: center; gap: 12px; font-size: 15.5px; color: #b3a6bd; transition: color .3s; }
+.etapas li i { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #eadcf1; flex: none; display: grid; place-items: center; color: #fff; font-size: 12px; font-style: normal; font-weight: 800; }
+.etapas li.ativa { color: var(--texto); }
+.etapas li.ativa i { border-color: #e7c2db; border-top-color: var(--marca); animation: girar .8s linear infinite; }
+.etapas li.ok { color: var(--texto); }
+.etapas li.ok i { background: var(--cta); border-color: transparent; animation: none; }
+.etapas li.ok i::after { content: "✓"; }
+@keyframes girar { to { transform: rotate(360deg); } }
+
+/* ================= RESULTADO ================= */
+.resultado > section { margin-bottom: 46px; }
+.resultado .t-medio { margin-bottom: 6px; }
+
+.hoje-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0 12px; }
+.hoje-meta > div { border-radius: 16px; padding: 14px 10px 16px; text-align: center; font-size: 14px; font-weight: 600; color: #3a3044; }
+.hoje-meta .hj { background: var(--fundo-2); }
+.hoje-meta .mt { background: #fdeef7; border: 1.5px solid #f3c9e2; }
+.hoje-meta small { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .1em; padding: 3px 10px; border-radius: 99px; background: #fff; color: var(--suave); margin-bottom: 8px; }
+.hoje-meta .mt small { background: var(--cta); color: #fff; }
+.hoje-meta .em { display: block; font-size: 46px; line-height: 1.1; margin-bottom: 6px; }
+
+.metricas { border: 1.5px solid var(--borda); border-radius: 18px; padding: 16px 16px 6px; }
+.metrica { margin-bottom: 14px; }
+.metrica b { display: block; font-size: 14.5px; margin-bottom: 6px; }
+.metrica .barras { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.metrica .seg { display: flex; gap: 4px; }
+.metrica .seg i { flex: 1; height: 6px; border-radius: 99px; background: #ece4f0; }
+.metrica .ruim i.on { background: var(--vermelho); }
+.metrica .bom i { background: var(--cta); }
+.metrica .rotulos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 12.5px; color: var(--suave); margin-top: 5px; }
+.metrica .rotulos span:last-child { color: var(--marca); font-weight: 700; }
+
+.grafico { border: 1.5px solid var(--borda); border-radius: 18px; padding: 16px 12px 12px; margin-top: 16px; }
+.grafico svg { width: 100%; height: auto; display: block; overflow: visible; }
+.grafico .linha { stroke-dasharray: 600; stroke-dashoffset: 600; transition: stroke-dashoffset 1.6s ease; }
+.grafico.on .linha { stroke-dashoffset: 0; }
+.grafico .pt { opacity: 0; transition: opacity .3s; }
+.grafico.on .pt { opacity: 1; }
+.grafico .eixo { display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; font-size: 12px; color: var(--suave); margin-top: 4px; }
+.grafico .eixo span:first-child { color: var(--vermelho); font-weight: 700; }
+.grafico .eixo span:last-child { color: var(--roxo); font-weight: 700; }
+
+.perfil { display: flex; gap: 12px; align-items: center; background: var(--fundo-2); border-radius: 16px; padding: 14px; margin: 18px 0 14px; }
+.perfil .em { font-size: 38px; flex: none; }
+.perfil small { display: block; font-size: 12px; font-weight: 700; color: var(--marca); text-transform: uppercase; letter-spacing: .06em; }
+.perfil strong { display: block; font: 800 20px/1.15 "Baloo 2", sans-serif; }
+.perfil p { font-size: 13.5px; color: var(--suave); margin-top: 2px; }
+.grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.legenda { text-align: center; font-size: 13px; color: var(--suave); margin-top: 12px; }
+
+.passos { display: grid; gap: 10px; margin-top: 18px; }
+.passo { display: flex; gap: 14px; align-items: flex-start; border: 1.5px solid var(--borda); border-radius: 16px; padding: 16px 14px; }
+.passo .ic { width: 50px; height: 50px; border-radius: 14px; background: #fcebf5; display: grid; place-items: center; font-size: 26px; flex: none; }
+.passo small { display: block; font-size: 11px; font-weight: 800; letter-spacing: .1em; color: var(--marca); }
+.passo strong { display: block; font-size: 16px; margin: 1px 0 2px; }
+.passo p { font-size: 14px; color: var(--suave); }
+
+.contador { display: flex; align-items: center; gap: 12px; width: max-content; max-width: 100%; margin: 18px auto 16px; border: 1.5px solid var(--borda); border-radius: 16px; padding: 10px 18px; box-shadow: 0 10px 26px -18px rgba(60, 20, 70, .5); }
+.contador .em { font-size: 30px; }
+.contador strong { display: block; font: 800 24px/1 "Baloo 2", sans-serif; }
+.contador span { font-size: 13px; color: var(--suave); }
+/* esteira de depoimentos: passa sozinha, cantos esfumaçados (igual ao Desaposta) */
+.esteira {
+  margin: 0 -16px; overflow: hidden; padding: 6px 0 14px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+}
+.esteira-trilho { display: flex; gap: 12px; width: max-content; padding-right: 12px; align-items: stretch; animation: esteira 60s linear infinite; }
+.esteira-copia { display: contents; }
+.esteira:hover .esteira-trilho, .esteira:active .esteira-trilho { animation-play-state: paused; }
+@keyframes esteira { to { transform: translateX(-50%); } }
+.lightbox { position: fixed; inset: 0; z-index: 50; background: rgba(15, 8, 20, .88); display: grid; place-items: center; padding: 20px; animation: subir .25s ease both; }
+.lightbox img { max-width: 100%; max-height: 86vh; border-radius: 14px; }
+.lightbox button { position: absolute; top: 14px; right: 16px; width: 40px; height: 40px; border-radius: 50%; background: #fff; font-size: 24px; line-height: 1; }
+
+.oferta { scroll-margin-top: 80px; }
+.cartao-oferta { border: 2px solid var(--marca); border-radius: 20px; overflow: hidden; margin-top: 18px; background: #fff; }
+.cartao-oferta .faixa { background: var(--cta); color: #fff; text-align: center; font-size: 12.5px; font-weight: 800; letter-spacing: .12em; padding: 9px; }
+.cartao-oferta .preco-box { text-align: center; padding: 20px 16px 18px; border-bottom: 1.5px solid var(--borda); }
+.cartao-oferta .de { color: var(--vermelho); text-decoration: line-through; font-weight: 700; font-size: 15px; }
+.cartao-oferta .preco { font: 800 60px/1 "Baloo 2", sans-serif; letter-spacing: -.02em; }
+.cartao-oferta .preco small { font-size: 22px; vertical-align: 26px; margin-right: 2px; }
+.cartao-oferta .preco-box span { font-size: 14px; color: var(--suave); }
+.cartao-oferta .inclui { padding: 18px 18px 20px; }
+.cartao-oferta h3 { font-size: 18px; margin-bottom: 12px; }
+.cartao-oferta ul { list-style: none; display: grid; gap: 11px; }
+.cartao-oferta li { display: flex; gap: 10px; font-size: 15px; color: #3a3044; }
+.cartao-oferta li::before { content: "✓"; flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--cta); color: #fff; font-size: 12px; font-weight: 800; display: grid; place-items: center; margin-top: 1px; }
+.oferta .btn { margin-top: 18px; }
+.garantia { display: flex; gap: 14px; align-items: center; background: var(--fundo-2); border-radius: 16px; padding: 16px; margin-top: 16px; }
+.garantia .em { font-size: 34px; flex: none; }
+.garantia strong { display: block; font-size: 16px; }
+.garantia p { font-size: 14px; color: var(--suave); }
+
+.faq { border: 1.5px solid var(--borda); border-radius: 18px; overflow: hidden; margin-top: 18px; }
+.faq details { border-top: 1.5px solid var(--borda); }
+.faq details:first-child { border-top: 0; }
+.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px; font-weight: 600; font-size: 15px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: ""; width: 8px; height: 8px; border-right: 2px solid var(--suave); border-bottom: 2px solid var(--suave); transform: rotate(45deg); flex: none; margin-top: -4px; transition: transform .2s; }
+.faq details[open] summary::after { transform: rotate(-135deg); margin-top: 4px; }
+.faq details p { padding: 0 16px 16px; font-size: 14.5px; color: var(--suave); margin-top: -4px; }
+
+.rodape { text-align: center; font-size: 12px; color: var(--suave); padding-top: 4px; }
+.rodape a { color: inherit; }
+
+@media (min-width: 420px) {
+  .t-grande { font-size: 36px; }
+  .t-medio { font-size: 30px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .grafico .linha { stroke-dashoffset: 0; }
+  .grafico .pt { opacity: 1; }
+  .esteira { overflow-x: auto; }
+  .esteira-copia { display: none; }
+}
+.analise h2 { font-size: 25px; }
+
+/* faixa esfumaçada no fim da tela (técnica da página A: camadas de blur crescente) */
+.fumaca { position: fixed; left: 0; right: 0; bottom: 0; height: 84px; z-index: 15; pointer-events: none; opacity: 0; transition: opacity .35s ease; }
+.fumaca.on { opacity: 1; }
+.fumaca::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.75)); }
+.fumaca i {
+  position: absolute; inset: 0;
+  -webkit-backdrop-filter: blur(var(--b)); backdrop-filter: blur(var(--b));
+  -webkit-mask-image: linear-gradient(180deg, transparent var(--m), #000 100%);
+  mask-image: linear-gradient(180deg, transparent var(--m), #000 100%);
+}
+
+/* aviso: o acesso libera todas as categorias */
+.aviso-todas { text-align: center; font-size: 14px; background: #fcebf5; border-radius: 12px; padding: 10px 12px; margin: 4px 0 18px; }
+.todas { margin-top: 16px; background: var(--fundo-2); border-radius: 16px; padding: 14px; text-align: center; }
+.todas strong { display: block; font-size: 15px; margin-bottom: 10px; }
+.todas .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.todas .chips span { font-size: 12.5px; font-weight: 600; background: #fff; border: 1.5px solid var(--borda); border-radius: 99px; padding: 4px 10px; color: #3a3044; }
+.todas .chips span.sua { border-color: var(--marca); background: #fdf1f8; color: var(--marca); }
+.todas small { display: block; font-size: 12.5px; color: var(--suave); margin-top: 10px; }
+.cartao-oferta li strong { color: var(--texto); }
+
+/* esteira: cartões padronizados no estilo DM do Instagram */
+.esteira { -webkit-mask-image: linear-gradient(90deg, transparent, #000 18px, #000 calc(100% - 18px), transparent); mask-image: linear-gradient(90deg, transparent, #000 18px, #000 calc(100% - 18px), transparent); }
+.esteira-trilho { animation-duration: 50s; }
+.dm { width: 316px; flex: none; background: #0c0e12; border-radius: 18px; overflow: hidden; cursor: zoom-in; box-shadow: 0 16px 30px -18px rgba(20, 8, 26, .8); }
+.dm figcaption { display: grid; grid-template-columns: auto 1fr; column-gap: 10px; align-items: center; padding: 12px 14px 10px; border-bottom: 1px solid #1f232b; }
+.dm .av { grid-row: span 2; width: 34px; height: 34px; border-radius: 50%; background: var(--cta); color: #fff; display: grid; place-items: center; font: 800 15px "Baloo 2", sans-serif; }
+.dm b { color: #fff; font-size: 14px; line-height: 1.2; }
+.dm small { color: #8b93a1; font-size: 12px; line-height: 1.2; }
+.dm-msg { height: 170px; display: grid; place-items: center; padding: 6px 4px; }
+.dm-msg img { width: 100%; height: 100%; object-fit: contain; }
