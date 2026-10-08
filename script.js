@@ -557,7 +557,7 @@ function blocoPassos() {
       <p class="sub">Do pagamento ao primeiro episódio em minutos.</p>
       <div class="passos">
         <div class="passo"><span class="ic">💳</span><div><small>PASSO 1</small><strong>Pague uma vez só</strong><p>R$ 14,90, sem mensalidade e sem susto no fim do mês.</p></div></div>
-        <div class="passo"><span class="ic">📲</span><div><small>PASSO 2</small><strong>Receba o link no WhatsApp</strong><p>Chega na hora e abre o canal do catálogo no Telegram (é grátis).</p></div></div>
+        <div class="passo"><span class="ic">📲</span><div><small>PASSO 2</small><strong>Receba seu acesso direto no WhatsApp</strong><p>Chega na hora, no WhatsApp e no e‑mail, e abre o canal do catálogo no Telegram (é grátis).</p></div></div>
         <div class="passo"><span class="ic">▶️</span><div><small>PASSO 3</small><strong>Dê play na sua lista</strong><p>Comece por “${primeiro}” — do episódio 1 ao último.</p></div></div>
       </div>
     </section>`;
