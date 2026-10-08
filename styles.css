@@ -453,3 +453,29 @@ h1, h2, h3 { font-family: "Baloo 2", sans-serif; line-height: 1.12; letter-spaci
 .contadores .contador .em { font-size: 26px; }
 .contadores .contador strong { font-size: 22px; }
 .contadores .contador span:not(.em) { font-size: 12.5px; line-height: 1.25; display: block; }
+
+/* transição suave antes de abrir o checkout */
+.transicao {
+  position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 24px;
+  background: rgba(255, 255, 255, .9); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  animation: transicao-entra .25s ease both;
+}
+.transicao-caixa { text-align: center; max-width: 300px; animation: subir .35s ease both; }
+.transicao-icone { font-size: 44px; line-height: 1; margin-bottom: 10px; }
+.transicao strong { display: block; font: 800 26px/1.1 "Baloo 2", sans-serif; margin-bottom: 6px; }
+.transicao p { color: var(--suave); font-size: 15.5px; margin-bottom: 18px; }
+.transicao-barra { height: 6px; border-radius: 99px; background: #f1e3f6; overflow: hidden; margin-bottom: 10px; }
+.transicao-barra i { display: block; height: 100%; width: 0; background: var(--cta); border-radius: 99px; animation: transicao-barra 1.25s ease-in-out forwards; }
+.transicao small { font-size: 13px; color: var(--suave); }
+@keyframes transicao-entra { from { opacity: 0; } to { opacity: 1; } }
+@keyframes transicao-barra { to { width: 100%; } }
+
+/* transição no estilo do pop-up de saída da página A:
+   fundo escurecido com desfoque + cartão branco no centro */
+.transicao { background: rgba(5, 1, 10, .82); }
+.transicao-caixa {
+  width: 100%; max-width: 360px; background: #fff; border-radius: 20px;
+  border: 1px solid rgba(219, 41, 158, .48);
+  box-shadow: 0 30px 60px -20px rgba(40, 20, 55, .14), 0 14px 34px -12px rgba(255, 114, 210, .38);
+  padding: 28px 22px 22px;
+}

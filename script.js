@@ -239,8 +239,10 @@ function capaHTML(item, i = 0, comTag = false) {
   </div>`;
 }
 
-function checkoutHref() {
-  const url = new URL(CONFIG.checkoutUrl);
+// Parte do link atual (se o Lowtrack já tiver acrescentado parâmetros, eles ficam)
+// e soma os UTMs/fbclid da visita.
+function checkoutHref(base = CONFIG.checkoutUrl) {
+  const url = new URL(base);
   new URLSearchParams(location.search).forEach((v, k) => url.searchParams.set(k, v));
   return url.toString();
 }
@@ -764,10 +766,33 @@ app.addEventListener("click", (ev) => {
   }
 });
 
-// recalcula UTMs/fbclid na hora do clique no checkout
+// Transição suave pro checkout: mostra "agora é só confirmar o pagamento" por
+// ~1,3 s e então abre a Lowify. O clique continua sendo no link com
+// pay.lowify.com.br, então o Lowtrack registra o InitiateCheckout normalmente.
+function irParaCheckout(ck) {
+  const tela = document.createElement("div");
+  tela.className = "transicao";
+  tela.setAttribute("role", "status");
+  tela.innerHTML = `
+    <div class="transicao-caixa">
+      <div class="transicao-icone">🎉</div>
+      <strong>Tudo certo!</strong>
+      <p>Agora é só confirmar o pagamento para liberar seu acesso.</p>
+      <div class="transicao-barra"><i></i></div>
+      <small>🔒 Abrindo o pagamento seguro da Lowify…</small>
+    </div>`;
+  document.body.appendChild(tela);
+  setTimeout(() => { location.href = ck.href; }, 1300);
+}
+// Voltou do checkout pelo "voltar" do celular: tira a tela de transição.
+addEventListener("pageshow", () => document.querySelectorAll(".transicao").forEach((t) => t.remove()));
+
 document.addEventListener("click", (ev) => {
   const ck = ev.target.closest("#btn-checkout");
-  if (ck) ck.href = checkoutHref();
+  if (ck) {
+    ck.href = checkoutHref(ck.href); // recalcula UTMs/fbclid na hora do clique
+    if (!(ev.metaKey || ev.ctrlKey || ev.shiftKey)) { ev.preventDefault(); irParaCheckout(ck); }
+  }
   const depo = ev.target.closest("[data-print]");
   if (depo) abrirPrint(depo.dataset.print);
 });
