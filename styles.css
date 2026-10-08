@@ -34,21 +34,14 @@ button { font: inherit; cursor: pointer; border: 0; background: none; color: inh
 /* ---------- topo: logo + barra de progresso ---------- */
 .topo { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.94); backdrop-filter: blur(8px); padding: 12px 16px 0; }
 .marca { display: flex; align-items: center; justify-content: center; gap: 8px; font: 700 18px "Baloo 2", sans-serif; padding-bottom: 10px; }
-/* símbolo da logo recortado de assets/logo.png (mesmo recorte da página A),
+/* símbolo da logo (assets/simbolo.webp, recortado do logo.png da página A)
    dentro de um quadradinho escuro de cantos arredondados */
 .simbolo {
-  --box: 32px; --s: calc(var(--box) * .86);
-  position: relative; flex: none; width: var(--box); height: var(--box); border-radius: 9px;
+  position: relative; flex: none; width: 32px; height: 32px; border-radius: 9px;
   background: radial-gradient(circle at 50% 40%, #2a1240, #120a1a 70%); overflow: hidden;
-  box-shadow: 0 6px 14px -8px rgba(122, 42, 168, .8);
+  box-shadow: 0 6px 14px -8px rgba(122, 42, 168, .8); display: grid; place-items: center;
 }
-.simbolo img {
-  position: absolute; max-width: none; height: auto;
-  width: calc(var(--s) * 800 / 183);
-  left: calc((var(--box) - var(--s)) / 2 - var(--s) * 61 / 183);
-  top: calc((var(--box) - var(--s)) / 2 - var(--s) * 70 / 183);
-}
-.simbolo-grande { --box: 64px; border-radius: 18px; position: absolute; inset: 0; margin: auto; }
+.simbolo img { width: 86%; height: 86%; }
 .marca b { color: var(--marca); }
 .trilho { max-width: 520px; margin: 0 auto; height: 5px; background: #f1e3f6; border-radius: 99px; overflow: hidden; }
 .trilho[hidden] { display: block; visibility: hidden; }
@@ -217,7 +210,7 @@ h1, h2, h3 { font-family: "Baloo 2", sans-serif; line-height: 1.12; letter-spaci
 .grafico .pt { opacity: 0; transition: opacity .3s; }
 .grafico.on .pt { opacity: 1; }
 .grafico .eixo { display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; font-size: 12px; color: var(--suave); margin-top: 4px; }
-.grafico .eixo span:first-child { color: var(--vermelho); font-weight: 700; }
+.grafico .eixo span:first-child { color: var(--marca); font-weight: 700; }
 .grafico .eixo span:last-child { color: var(--roxo); font-weight: 700; }
 
 .perfil { display: flex; gap: 12px; align-items: center; background: var(--fundo-2); border-radius: 16px; padding: 14px; margin: 18px 0 14px; }
@@ -381,3 +374,82 @@ h1, h2, h3 { font-family: "Baloo 2", sans-serif; line-height: 1.12; letter-spaci
   box-shadow: 0 14px 30px -18px rgba(20, 8, 26, .7);
 }
 .print-moldura img { width: 100%; height: 100%; object-fit: contain; }
+
+/* Flutuação contínua dos celulares da abertura (mesmos tempos da página A) */
+.vitrine .centro-cel { animation: boiar-centro 5.6s ease-in-out .2s infinite; }
+.vitrine .esq { animation: boiar-esq 6.2s ease-in-out infinite; }
+.vitrine .dir { animation: boiar-dir 6.6s ease-in-out .5s infinite; }
+@keyframes boiar-centro { 0%, 100% { transform: translateX(-50%); } 50% { transform: translateX(-50%) translateY(-10px); } }
+@keyframes boiar-esq { 0%, 100% { transform: rotate(-6deg); } 50% { transform: translateY(-14px) rotate(-6deg); } }
+@keyframes boiar-dir { 0%, 100% { transform: rotate(6deg); } 50% { transform: translateY(-14px) rotate(6deg); } }
+
+/* centro do anel da análise: roleta de emojis das categorias, para no do perfil */
+.anel .centro-emoji { position: absolute; inset: 0; display: grid; place-items: center; }
+.anel .centro-emoji { font-size: 58px; line-height: 1; }
+.anel .centro-emoji.pulo { animation: pulo-emoji .22s ease-out; }
+.anel .centro-emoji.parou { animation: parou-emoji .5s cubic-bezier(.3,1.6,.5,1) forwards; }
+@keyframes pulo-emoji { from { transform: translateY(8px) scale(.85); opacity: .4; } to { transform: none; opacity: 1; } }
+@keyframes parou-emoji { 0% { transform: scale(.6); } 100% { transform: scale(1.12); } }
+
+/* porcentagem pequena logo abaixo do anel */
+.analise .anel { margin-bottom: 10px; }
+.pct-pequena {
+  font: 800 20px/1 "Baloo 2", sans-serif; margin-bottom: 18px; font-variant-numeric: tabular-nums;
+  background: var(--cta); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* encaixe suave na oferta: feito em script.js (ajusteOferta), sem scroll-snap */
+
+/* oferta um pouco mais compacta: título + cartão + botão + nota cabem
+   juntos na tela quando a rolagem encaixa no botão */
+.cartao-oferta { margin-top: 14px; }
+.cartao-oferta .faixa { padding: 8px; }
+.cartao-oferta .preco-box { padding: 14px 16px 12px; }
+.cartao-oferta .preco { font-size: 52px; }
+.cartao-oferta .preco small { vertical-align: 22px; }
+.cartao-oferta .inclui { padding: 14px 16px 16px; }
+.cartao-oferta h3 { margin-bottom: 10px; }
+.cartao-oferta ul { gap: 8px; }
+.cartao-oferta li { font-size: 14.5px; }
+.oferta .btn { margin-top: 14px; }
+.oferta .nota { margin-top: 10px; }
+
+/* ===== Vitrine da abertura com a mesma composição da página A =====
+   --w = largura do celular do meio (52,5% da tela, como na página A);
+   laterais quase do mesmo tamanho, encostadas atrás dele (deslocadas 43% de --w),
+   um pouco mais baixas e giradas só 3°. */
+.vitrine {
+  --w: clamp(150px, 52.5vw, 230px);
+  position: relative; max-width: none;
+  height: calc(var(--w) * 1.966 + 12px); margin: 4px auto 20px;
+}
+.vitrine img { top: 0; }
+.vitrine .centro-cel, .vitrine .lado { position: absolute; left: 50%; right: auto; }
+.vitrine .centro-cel { width: var(--w); top: 0; }
+.vitrine .lado { width: calc(var(--w) * .965); top: calc(var(--w) * .31); opacity: 1; }
+.vitrine .esq { transform: translateX(calc(-50% - var(--w) * .43)) rotate(-3deg); }
+.vitrine .dir { transform: translateX(calc(-50% + var(--w) * .43)) rotate(3deg); }
+.vitrine .chip-a { left: 0; bottom: calc(var(--w) * .28); }
+.vitrine .chip-b { right: 0; bottom: calc(var(--w) * .55); }
+@keyframes boiar-esq {
+  0%, 100% { transform: translateX(calc(-50% - var(--w) * .43)) rotate(-3deg); }
+  50% { transform: translateX(calc(-50% - var(--w) * .43)) translateY(-14px) rotate(-3deg); }
+}
+@keyframes boiar-dir {
+  0%, 100% { transform: translateX(calc(-50% + var(--w) * .43)) rotate(3deg); }
+  50% { transform: translateX(calc(-50% + var(--w) * .43)) translateY(-14px) rotate(3deg); }
+}
+/* telas baixas: celulares menores pra o botão aparecer sem rolar */
+@media (max-height: 720px) {
+  .vitrine { --w: min(40vw, 150px); margin-bottom: 14px; }
+}
+
+/* um respiro a mais entre a oferta e as perguntas frequentes (destaca o CTA) */
+.resultado > .oferta { margin-bottom: 72px; }
+
+/* dois números de prova social lado a lado */
+.contadores { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 18px 0 16px; }
+.contadores .contador { width: auto; margin: 0; padding: 10px 12px; gap: 10px; }
+.contadores .contador .em { font-size: 26px; }
+.contadores .contador strong { font-size: 22px; }
+.contadores .contador span:not(.em) { font-size: 12.5px; line-height: 1.25; display: block; }
