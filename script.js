@@ -17,11 +17,15 @@ const CATEGORIAS = {
                  frase: "Você não sossega até ver quem foi humilhada dar a volta por cima." },
   romance:     { nome: "Romance e Traição", emoji: "💔", capa: "gemeos-secretos-do-don.jpg", perfil: "Coração Intenso",
                  frase: "Você sente cada traição e precisa saber se o casal fica junto." },
+  picantes:    { nome: "Dramas Picantes", emoji: "🌶️", capa: "por-favor-amarre-me-tio.jpg", perfil: "Romântica Ousada",
+                 frase: "Você gosta de química, tensão e romance que esquenta a cada episódio." },
+  lgbt:        { nome: "Dramas LGBT+", emoji: "🏳️‍🌈", capa: "dando-aulas-para-o-meu-rival.jpg", perfil: "Coração Sem Rótulos",
+                 frase: "Você gosta de amor de todas as formas, com química e história bem contada." },
   turcos:      { nome: "Dramas Turcos", emoji: "🇹🇷", capa: "nunca-vivido.jpg", perfil: "Alma de Novela Turca",
                  frase: "Paixão, família poderosa e segredo guardado do começo ao fim." },
   coreanos:    { nome: "Doramas Coreanos", emoji: "🌸", capa: "o-amor-na-primeira-neve.jpg", perfil: "Doramaníaca de Carteirinha",
                  frase: "Romance que cresce devagar, com frio na barriga a cada episódio." },
-  brasileiros: { nome: "Dramas Brasileiros", emoji: "🇧🇷", capa: "fazendeiro.jpg", perfil: "Noveleira Raiz",
+  brasileiros: { nome: "Dramas Brasileiros", emoji: "🇧🇷", capa: "como-chutar-um-craque-da-bola.jpg", perfil: "Noveleira Raiz",
                  frase: "História com cara de vida real: família, segredo e muito barraco." },
   asiaticas:   { nome: "Séries Asiáticas", emoji: "🏯", capa: "traido-pelo-dragao-duas-fenix.jpg", perfil: "Aventureira do Oriente",
                  frase: "Poder escondido, destino e batalha épica: nada de história comum." },
@@ -84,7 +88,25 @@ const ARQUIVOS_CAPAS = {
   "De Ex-Presa à Esposa Mimada do CEO": "de-ex-presa-a-esposa-mimada-do-ceo.jpg",
   "Minha Garota da Sorte": "minha-garota-da-sorte.jpg",
   "Querido Irmão, Seu Amor Veio Tarde Demais": "querido-irmao-seu-amor-veio-tarde-demais.jpg",
+  // títulos só do quiz (não estão na página A)
+  "Meu Querido Doutor, Por Favor, Seja Gentil Comigo": "meu-querido-doutor-por-favor-seja-gentil-comigo.jpg",
+  "Dando Aulas para o Meu Rival": "dando-aulas-para-o-meu-rival.jpg",
+  "Meu Rival no Gelo": "meu-rival-no-gelo.jpg",
+  "Pluma Dourada": "pluma-dourada.jpg",
+  "Meu Bully, Meu Irmão": "meu-bully-meu-irmao.jpg",
+  "Meu Príncipe, Vamos Sair do Armário?": "meu-principe-vamos-sair-do-armario.jpg",
+  "Tomada pela Irmã do Meu Marido": "tomada-pela-irma-do-meu-marido.jpg",
 };
+
+// "Dramas Picantes" é uma etiqueta extra: estes títulos continuam na categoria
+// original e também aparecem para quem escolhe picantes.
+const PICANTES = [
+  "Por Favor, Amarre-me, Tio",
+  "A Amante Secreta do Poderoso Chefão",
+  "Dessa Vez, Eu Escolhi o Mafioso",
+  "Adeus, Minha Tentadora Esposa",
+  "Depois do Divórcio, Virei a Esposa XXL do Padrinho",
+];
 
 const CATALOGO = [
   ["50 Centavos para Encontrar Meu Pai Bilionário", "americanas"],
@@ -140,6 +162,13 @@ const CATALOGO = [
   ["De Ex-Presa à Esposa Mimada do CEO", "vinganca"],
   ["Minha Garota da Sorte", "coreanos"],
   ["Querido Irmão, Seu Amor Veio Tarde Demais", "brasileiros"],
+  ["Meu Querido Doutor, Por Favor, Seja Gentil Comigo", "picantes"],
+  ["Dando Aulas para o Meu Rival", "lgbt"],
+  ["Meu Rival no Gelo", "lgbt"],
+  ["Pluma Dourada", "lgbt"],
+  ["Meu Príncipe, Vamos Sair do Armário?", "lgbt"],
+  ["Tomada pela Irmã do Meu Marido", "lgbt"],
+  ["Meu Bully, Meu Irmão", "lgbt"],
 ].map(([titulo, cat], i) => ({ titulo, cat, alta: i < 12, arquivo: ARQUIVOS_CAPAS[titulo] }));
 
 /* ---------------- perguntas ---------------- */
@@ -223,13 +252,20 @@ function gostosEscolhidos() {
 // Intercala as categorias escolhidas, com os "em alta" primeiro.
 function listaPersonalizada(qtd) {
   const porCat = gostosEscolhidos().map((g) =>
-    CATALOGO.filter((c) => c.cat === g).sort((a, b) => b.alta - a.alta));
+    CATALOGO.filter((c) => c.cat === g || (g === "picantes" && PICANTES.includes(c.titulo)))
+      .sort((a, b) => (b.cat === g) - (a.cat === g) || b.alta - a.alta));
   const lista = [];
   for (let i = 0; lista.length < qtd && porCat.some((l) => l[i]); i++) {
-    porCat.forEach((l) => l[i] && lista.length < qtd && lista.push(l[i]));
+    porCat.forEach((l) => l[i] && lista.length < qtd && !lista.includes(l[i]) && lista.push(l[i]));
   }
-  for (const c of CATALOGO) { if (lista.length >= qtd) break; if (!lista.includes(c)) lista.push(c); }
+  // Só completa com outros títulos se as categorias escolhidas não tiverem nenhum.
+  if (!lista.length) for (const c of CATALOGO) { if (lista.length >= qtd) break; lista.push(c); }
   return lista;
+}
+
+// Categoria com títulos no CATALOGO deste quiz (ex.: LGBT+ ainda não tem capas aqui).
+function temTitulos(cat) {
+  return CATALOGO.some((c) => c.cat === cat || (cat === "picantes" && PICANTES.includes(c.titulo)));
 }
 
 function mostrar(html, classe = "") {
@@ -280,8 +316,9 @@ function baixarTelas(i = 1) {
   pre.onload = pre.onerror = () => { if (pre.naturalWidth) telasProntas.add(TELAS_CELULAR[i]); baixarTelas(i + 1); };
   pre.src = TELAS_CELULAR[i];
 }
-if (document.readyState === "complete") setTimeout(baixarTelas, 1500);
-else addEventListener("load", () => setTimeout(baixarTelas, 1500), { once: true });
+// Começa já (sem esperar o resto da página): a próxima tela precisa estar pronta
+// antes da primeira troca, senão o celular parece parado.
+baixarTelas();
 
 function girarCelular() {
   clearTimeout(timerCelular);
@@ -289,9 +326,9 @@ function girarCelular() {
   const trocar = () => {
     const caixa = document.getElementById("celRotativo");
     if (!caixa) return; // saiu da abertura
-    timerCelular = setTimeout(trocar, 4200);
     const prox = (indice + 1) % TELAS_CELULAR.length;
-    if (!telasProntas.has(TELAS_CELULAR[prox])) return; // ainda baixando: tenta na próxima rodada
+    if (!telasProntas.has(TELAS_CELULAR[prox])) { timerCelular = setTimeout(trocar, 500); return; } // ainda baixando
+    timerCelular = setTimeout(trocar, 4200);
     indice = prox;
     const antiga = caixa.lastElementChild;
     const nova = document.createElement("img");
@@ -302,7 +339,7 @@ function girarCelular() {
     requestAnimationFrame(() => { nova.style.opacity = "1"; antiga.style.opacity = "0"; });
     setTimeout(() => antiga.remove(), 750);
   };
-  timerCelular = setTimeout(trocar, 4200);
+  timerCelular = setTimeout(trocar, 3000); // primeira troca um pouco mais cedo
 }
 
 function telaPergunta(id) {
@@ -310,9 +347,9 @@ function telaPergunta(id) {
   const atual = respostas[id] ?? (p.multi ? [] : null);
 
   const corpo = p.multi
-    ? `<div class="tiles">${Object.entries(CATEGORIAS).map(([k, c]) => `
+    ? `<div class="tiles lista">${Object.entries(CATEGORIAS).map(([k, c]) => `
         <button type="button" class="tile" data-valor="${k}" aria-pressed="${atual.includes(k)}">
-          <img src="${CONFIG.capasDir}${c.capa}" alt="" loading="lazy">
+          ${c.capa ? `<img src="${CONFIG.capasDir}${c.capa}" alt="" loading="lazy">` : `<span class="sem-capa">${c.emoji}</span>`}
           <span class="rot"><span>${c.emoji}</span>${c.nome}</span>
           <span class="radio"></span>
         </button>`).join("")}</div>
@@ -357,17 +394,17 @@ function telaReflexao() {
 
 // Pausa 2 — desejo: mostra capas das categorias escolhidas no meio do quiz
 function telaCapas() {
-  const nomes = gostosEscolhidos().map((g) => CATEGORIAS[g].nome);
-  const texto = nomes.length > 2 ? `${nomes.slice(0, 2).join(", ")} e mais` : nomes.join(" e ");
+  const nomes = gostosEscolhidos().filter(temTitulos).map((g) => CATEGORIAS[g].nome);
+  const texto = !nomes.length ? "Alguns dos mais assistidos do catálogo"
+    : nomes.length > 2 ? `${nomes.slice(0, 2).join(", ")} e mais` : nomes.join(" e ");
   mostrar(`
     ${voltarHTML}
     <section class="pausa subir">
       <h2 class="t-medio">Boa escolha! Olha o que já está <span class="pilula">te esperando</span></h2>
       <p class="sub" style="margin:-10px 0 16px">${texto} — todos completos e na ordem.</p>
       <div class="fileira">${listaPersonalizada(8).map((c, i) => capaHTML(c, i, true)).join("")}</div>
-      <p class="fecho">E isso é só o começo.</p>
-      <p class="aviso-todas">🔓 Seu acesso libera <strong>todas as 7 categorias</strong>, não só as que você escolheu.</p>
-      <p class="sub">Faltam 3 perguntas pra sua lista ficar pronta.</p>
+      <p class="fecho">🔓 E isso é só o começo</p>
+      <p class="sub aviso-curto">Seu acesso libera as ${Object.keys(CATEGORIAS).length} categorias, não só as que você escolheu.</p>
       <button class="btn" type="button" data-acao="avancar">Continuar</button>
     </section>`);
 }
@@ -511,30 +548,23 @@ function blocoPassos() {
     </section>`;
 }
 
-// Prints reais de mensagens de clientes. O cartão mostra só o trecho da mensagem
-// (assets/provas/msg-*.jpg, recortado do print); tocar abre o print completo.
-const PRINTS = [
-  ["rosangela-prova", "Rosângela P."],
-  ["claudia", "Cláudia S."],
-  ["paty", "Paty M."],
-  ["maria", "Maria Helena S."],
-  ["marcos-prova", "Marcos O."],
-];
+// Prints reais de mensagens de clientes (assets/provas), inteiros, numa faixa
+// que passa sozinha. Tocar abre o print em tela cheia.
+const PRINTS = ["rosangela-prova", "claudia", "paty", "maria", "marcos-prova"];
 
 function blocoProva() {
-  const cartoes = PRINTS.map(([arq, nome]) => `
-    <figure class="dm" data-print="${arq}" role="button" tabindex="0" aria-label="Ver print completo da mensagem de ${nome}">
-      <figcaption><span class="av">${nome[0]}</span><b>${nome}</b><small>mensagem no Instagram</small></figcaption>
-      <div class="dm-msg"><img src="assets/provas/msg-${arq}.jpg" alt="Mensagem de ${nome} agradecendo pelo acesso" loading="lazy"></div>
-    </figure>`).join("");
+  const imgs = PRINTS.map((p) => `
+    <div class="print-moldura" data-print="${p}" role="button" tabindex="0" aria-label="Ampliar print">
+      <img src="assets/provas/${p}.jpg" alt="Print de mensagem de cliente agradecendo pelo acesso" loading="lazy">
+    </div>`).join("");
   return `
     <section>
       <h2 class="t-medio">Quem já está <span class="pilula">assistindo</span></h2>
       <div class="contador"><span class="em">⭐</span><div><strong>+8 mil</strong><span>clientes · nota 4,9 de 5</span></div></div>
-      <div class="esteira" aria-label="Mensagens de clientes">
-        <div class="esteira-trilho">${cartoes}<div class="esteira-copia" aria-hidden="true">${cartoes}</div></div>
+      <div class="esteira" aria-label="Prints de mensagens de clientes">
+        <div class="esteira-trilho">${imgs}<div class="esteira-copia" aria-hidden="true">${imgs}</div></div>
       </div>
-      <p class="legenda">Toque numa mensagem para ver o print completo</p>
+      <p class="legenda">Toque num print para ampliar</p>
     </section>`;
 }
 
@@ -563,7 +593,7 @@ function blocoOferta() {
           <h3>O que está incluído</h3>
           <ul>
             <li>Mais de 8.300 dramas completos, do 1º ao último episódio</li>
-            <li>Sua lista de ${principal.nome} pronta pra começar</li>
+            <li>${temTitulos(gostosEscolhidos()[0]) ? `Sua lista de ${principal.nome} pronta pra começar` : "Sua lista inicial pronta pra começar"}</li>
             <li>${respostas.idioma === "legendado" ? "Legendado e dublado" : "Dublado e legendado"}, no formato vertical</li>
             <li>Títulos novos todos os dias</li>
             <li>Peça o drama que quiser</li>
@@ -582,7 +612,7 @@ function blocoOferta() {
 
 function blocoFaq() {
   const itens = [
-    ["Vou ter acesso só às categorias que escolhi no quiz?", "Não. O quiz só monta uma lista pra você começar. O acesso libera o catálogo inteiro, com todas as categorias: dramas turcos, doramas coreanos, dramas brasileiros, séries asiáticas, americanas, romance e vingança."],
+    ["Vou ter acesso só às categorias que escolhi no quiz?", "Não. O quiz só monta uma lista pra você começar. O acesso libera o catálogo inteiro, com todas as categorias: dramas turcos, doramas coreanos, dramas brasileiros, séries asiáticas, americanas, romance, vingança, picantes e LGBT+."],
     ["Os dramas são completos mesmo?", "Sim. Cada drama vem do episódio 1 ao último, na ordem certa, sem pedaço faltando."],
     ["Como recebo o acesso?", "Assim que o pagamento é aprovado, o link chega no seu WhatsApp junto com um tutorial. Ele abre o canal do catálogo no Telegram."],
     ["Preciso instalar algum aplicativo?", "Só o Telegram, que é gratuito e parecido com o WhatsApp. Se ainda não tiver, o tutorial mostra como instalar em menos de 2 minutos."],
